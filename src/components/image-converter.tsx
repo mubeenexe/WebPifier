@@ -156,7 +156,7 @@ function ImageConverterUI({ onReset }: { onReset: () => void }) {
                 <div className="space-y-2">
                   <Label className="text-center block">Original Image</Label>
                   <div className="relative aspect-video w-full rounded-lg overflow-hidden border">
-                    <Image src={originalPreview!} alt="Original image preview" layout="fill" objectFit="contain" />
+                    <Image src={originalPreview!} alt="Original image preview" fill className="object-contain" />
                      <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 bg-background/50 hover:bg-background/80 rounded-full h-8 w-8" onClick={onReset}>
                         <X className="h-4 w-4" />
                         <span className="sr-only">Remove image</span>
@@ -172,7 +172,7 @@ function ImageConverterUI({ onReset }: { onReset: () => void }) {
                         <Progress value={undefined} className="animate-pulse" />
                       </div>
                     ) : formState.convertedImage ? (
-                      <Image src={formState.convertedImage} alt="Converted image preview" layout="fill" objectFit="contain" />
+                      <Image src={formState.convertedImage} alt="Converted image preview" fill className="object-contain" />
                     ) : (
                         <div className="text-center text-muted-foreground">
                             <FileImage className="h-12 w-12 mx-auto" />
