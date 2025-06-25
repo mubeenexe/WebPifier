@@ -247,9 +247,16 @@ export async function compressDocs(
     const archive = archiver("zip", { zlib: { level: 9 } });
     archive.pipe(archiveStream);
     for (const doc of docs) {
-      const buffer = Buffer.from(await doc.arrayBuffer());
-      archive.append(buffer, { name: doc.name });
+      if (typeof doc === 'object' && doc !== null && 'arrayBuffer' in doc && 'name' in doc) {
+        const buffer = Buffer.from(await doc.arrayBuffer());
+        archive.append(buffer, { name: doc.name });
+      } else {
+        // Skip or handle non-File entries
+        continue;
+      }
     }
+    let totalLength = 0;
+    archiveStream.on('data', (chunk) => { totalLength += chunk.length; });
     await archive.finalize();
     const chunks: Buffer[] = [];
     for await (const chunk of archiveStream) {

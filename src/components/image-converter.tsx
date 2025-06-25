@@ -71,7 +71,7 @@ function ImageConverterUI({ onReset }: { onReset: () => void }) {
     const validFiles: File[] = [];
     const previews: string[] = [];
     Array.from(files)
-      .slice(0, 10)
+      .slice(0, 20)
       .forEach((file) => {
         if (
           !["image/png", "image/jpeg", "image/jpg", "image/webp"].includes(
@@ -216,7 +216,7 @@ function ImageConverterUI({ onReset }: { onReset: () => void }) {
                   Click to upload or drag and drop
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  PNG, JPG, or WEBP (max 10MB each, up to 10 files)
+                  PNG, JPG, or WEBP (max 10MB each, up to 20 files)
                 </p>
               </div>
               <Input

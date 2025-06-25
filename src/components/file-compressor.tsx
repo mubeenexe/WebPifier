@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Card,
   CardHeader,
@@ -46,6 +46,23 @@ export default function FileCompressor() {
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const downloadLinksRef = useRef<(HTMLAnchorElement | null)[]>([]);
+
+  useEffect(() => {
+    if (formState.message) {
+      if (formState.error) {
+        toast({
+          variant: "destructive",
+          title: "Compression Failed",
+          description: formState.message,
+        });
+      } else {
+        toast({
+          title: "Success!",
+          description: formState.message,
+        });
+      }
+    }
+  }, [formState, toast]);
 
   const handleFiles = (fileList: FileList | File[]) => {
     const arr = Array.from(fileList).slice(0, MAX_FILES);
@@ -106,10 +123,10 @@ export default function FileCompressor() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7 }}
     >
-      <Card className="w-full max-w-4xl mx-auto shadow-2xl shadow-primary/10 mt-12 border-2 border-primary/10 bg-gradient-to-br from-background to-accent/10">
+      <Card className="w-full max-w-4xl mx-auto shadow-2xl shadow-primary/10 mt-12 rounded-lg border bg-card text-card-foreground">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <FileArchive className="h-8 w-8 text-primary animate-bounce-slow" />
+            <FileArchive className="h-8 w-8 text-primary" />
             <CardTitle className="text-3xl font-bold tracking-tight">File Compressor</CardTitle>
           </div>
           <CardDescription className="text-lg">
@@ -123,7 +140,7 @@ export default function FileCompressor() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5 }}
-                className="relative flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-primary/30 rounded-2xl cursor-pointer transition-colors bg-gradient-to-br from-accent/10 to-background hover:border-primary/60 hover:bg-primary/5 group"
+                className="relative flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-primary/30 rounded-lg cursor-pointer transition-colors bg-card hover:border-primary/60 hover:bg-accent/10 group"
                 onClick={() => fileInputRef.current?.click()}
               >
                 <div className="text-center">
@@ -153,7 +170,7 @@ export default function FileCompressor() {
                   {files.map((file, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center gap-2 border rounded-xl px-3 py-1 bg-muted/60 shadow-sm"
+                      className="flex items-center gap-2 border rounded-lg px-3 py-1 bg-muted/60 shadow-sm"
                     >
                       {IMAGE_TYPES.includes(file.type) ? (
                         <File className="h-4 w-4 text-primary" />
@@ -204,7 +221,7 @@ export default function FileCompressor() {
                 transition={{ duration: 0.5 }}
                 className="flex justify-center mt-6"
               >
-                <Button type="submit" size="lg" disabled={isPending} className="px-8 py-4 text-lg font-semibold shadow-lg">
+                <Button type="submit" size="lg" disabled={isPending} className="px-8 py-4 text-lg font-semibold shadow-lg rounded-lg">
                   {isPending ? "Compressing..." : "Compress Files"}
                 </Button>
               </motion.div>
@@ -222,30 +239,39 @@ export default function FileCompressor() {
             >
               <Label className="text-center block mb-2 text-lg font-semibold">Compressed Files</Label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
-                {formState.results.map((result, idx) => (
-                  <div
-                    key={idx}
-                    className="border rounded-2xl p-6 flex flex-col items-center bg-muted/40 shadow-md"
-                  >
-                    <p className="text-green-600 text-sm mb-2">{result.message}</p>
-                    <a
-                      ref={el => { downloadLinksRef.current[idx] = el || null; }}
-                      href={result.convertedImage ? result.convertedImage : ""}
-                      download={typeof result.fileName === "string" ? result.fileName : `compressed-file-${idx + 1}`}
-                      className="hidden"
+                {formState.results.map((result, idx) =>
+                  result.convertedImage ? (
+                    <div
+                      key={idx}
+                      className="border rounded-lg p-6 flex flex-col items-center bg-muted/40 shadow-md"
                     >
-                      Download
-                    </a>
-                    <Button
-                      className="mt-2"
-                      size="sm"
-                      onClick={() => downloadLinksRef.current[idx]?.click()}
+                      <p className="text-green-600 text-sm mb-2">{result.message}</p>
+                      <a
+                        ref={el => { downloadLinksRef.current[idx] = el || null; }}
+                        href={result.convertedImage}
+                        download={typeof result.fileName === "string" ? result.fileName : `compressed-file-${idx + 1}`}
+                        className="hidden"
+                      >
+                        Download
+                      </a>
+                      <Button
+                        className="mt-2 rounded-lg"
+                        size="sm"
+                        onClick={() => downloadLinksRef.current[idx]?.click()}
+                      >
+                        <Download className="mr-2 h-4 w-4" />
+                        Download {result.fileName}
+                      </Button>
+                    </div>
+                  ) : (
+                    <div
+                      key={idx}
+                      className="border rounded-lg p-6 flex flex-col items-center bg-muted/40 shadow-md"
                     >
-                      <Download className="mr-2 h-4 w-4" />
-                      Download {result.fileName}
-                    </Button>
-                  </div>
-                ))}
+                      <p className="text-red-600 text-sm mb-2">{result.message || "Compression failed."}</p>
+                    </div>
+                  )
+                )}
               </div>
             </motion.div>
           )}
@@ -269,7 +295,7 @@ function FeatureBox({
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
-      className={`rounded-2xl border p-6 shadow-md transition-shadow flex flex-col gap-2 ${active ? "border-primary shadow-lg bg-primary/5" : "bg-muted/30"}`}
+      className={`rounded-lg border p-6 shadow-md transition-shadow flex flex-col gap-2 ${active ? "border-primary shadow-lg bg-primary/5" : "bg-muted/30"}`}
     >
       <h3 className="text-lg font-semibold mb-2">{title}</h3>
       <p className="text-muted-foreground text-base">{description}</p>
