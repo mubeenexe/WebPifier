@@ -1,9 +1,8 @@
 
 'use client';
 
-import { useState, useRef, useEffect, useMemo, useTransition } from 'react';
+import { useState, useRef, useEffect, useMemo, useTransition, useActionState } from 'react';
 import Image from 'next/image';
-import { useFormState } from 'react-dom';
 import { convertImage, type ConversionState } from '@/app/actions';
 
 import { useToast } from "@/hooks/use-toast"
@@ -28,7 +27,7 @@ export default function ImageConverter() {
 }
 
 function ImageConverterUI({ onReset }: { onReset: () => void }) {
-  const [formState, formAction] = useFormState(convertImage, initialState);
+  const [formState, formAction] = useActionState(convertImage, initialState);
   const [isPending, startTransition] = useTransition();
 
   const formRef = useRef<HTMLFormElement>(null);
