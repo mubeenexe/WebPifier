@@ -10,6 +10,7 @@ WebPifier is a modern image conversion tool built with Next.js, designed to stre
 - **Submit Button:** Convert your image with a single click, triggering backend processing.
 - **Automatic Download:** The converted image is automatically downloaded to your device, with an option to provide a download link.
 - **Converted Image Preview:** View a preview of the image after it has been converted.
+- **Animated UI:** The app uses framer-motion for smooth entrance animations on the hero section, feature cards, and other key UI elements. The Get Started button scrolls smoothly to the converter section for a modern, interactive experience.
 
 ## Style Guidelines
 
@@ -18,4 +19,4 @@ WebPifier is a modern image conversion tool built with Next.js, designed to stre
 - **Accent color:** Pale purple (#D3CEDF) to highlight interactive elements.
 - **Font:** 'Inter', a modern, neutral, and highly readable sans-serif font for body and headlines.
 - **Layout:** Clear visual hierarchy, optimized for both desktop and mobile views for ease of use across devices.
-- **Animations:** Subtle feedback animations, such as a progress bar during conversion or a gentle pulse on the download button, enhance usability without distraction.
+- **Animations:** Modern, subtle feedback animations powered by framer-motion, including animated entrances for hero and features, smooth scrolling navigation, a progress bar during conversion, and a gentle pulse on the download button to enhance usability without distraction.

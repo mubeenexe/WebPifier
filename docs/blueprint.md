@@ -8,6 +8,7 @@
 - Submit Button: Button that triggers image conversion on the backend when clicked.
 - Automatic Download: Automatically downloads the converted image to the user's device, with an option to provide a download link.
 - Converted Image Preview: Displays a preview of the image after it has been converted.
+- **Animated UI:** The app uses framer-motion for smooth entrance animations on the hero section, feature cards, and other key UI elements. The Get Started button scrolls smoothly to the converter section for a modern, interactive experience.
 
 ## Style Guidelines:
 
@@ -16,4 +17,4 @@
 - Accent color: Pale purple (#D3CEDF) to highlight interactive elements without overpowering the main content.
 - Body and headline font: 'Inter', a sans-serif font that offers a modern, neutral, and highly readable experience.
 - The layout will have clear visual hierarchy and be optimized for both desktop and mobile views, ensuring ease of use across devices.
-- Subtle animations will provide feedback on user interactions, like a progress bar during image conversion or a gentle pulse on the download button, to enhance usability without distracting from the task.
+- Subtle and modern animations provide feedback and delight, including animated entrances for hero and features, smooth scrolling navigation, a progress bar during image conversion, and a gentle pulse on the download button to enhance usability without distracting from the task.
