@@ -53,6 +53,7 @@ function Footer() {
       >
         View on GitHub
       </a>
+
     </footer>
   );
 }
