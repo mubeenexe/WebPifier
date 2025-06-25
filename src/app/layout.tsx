@@ -22,6 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.variable}>
+      <meta name="google-adsense-account" content="ca-pub-9647570304263055" />
       <Script
         async
         src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9647570304263055"
