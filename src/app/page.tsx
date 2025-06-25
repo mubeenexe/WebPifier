@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowDown } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRef } from "react";
+import Link from "next/link";
 
 export default function Home() {
   const converterRef = useRef<HTMLDivElement>(null);
@@ -24,6 +25,11 @@ export default function Home() {
         className="w-full flex flex-col items-center justify-center px-4 sm:px-6 md:px-8 -mt-16 z-10"
       >
         <ImageConverter />
+        <Link href="/compress">
+          <Button size="lg" className="mt-6">
+            Compress Images & Docs
+          </Button>
+        </Link>
       </div>
       <FeaturesSection />
     </main>
