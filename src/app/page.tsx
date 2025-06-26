@@ -59,7 +59,7 @@ function HeroSection({
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.7 }}
-        className="mt-6 flex gap-4"
+        className="mt-6 flex flex-col md:flex-row gap-4"
       >
         <motion.a
           href="#converter"
@@ -68,7 +68,7 @@ function HeroSection({
           transition={{ duration: 0.7, delay: 0.5 }}
           onClick={onGetStarted}
         >
-          <Button size="lg" className="px-8 py-4 text-lg font-semibold shadow-lg">
+          <Button size="lg" className="px-8 py-4 text-lg font-semibold shadow-lg w-full md:w-auto">
             Get Started
             <ArrowDown className="ml-2 h-5 w-5 animate-bounce" />
           </Button>
@@ -77,7 +77,7 @@ function HeroSection({
           <Button
             size="lg"
             variant="outline"
-            className="px-8 py-4 text-lg font-semibold border-primary text-primary hover:bg-primary/10 shadow-md hover:shadow-xl transition-all duration-200"
+            className="px-8 py-4 text-lg font-semibold border-primary text-primary hover:bg-primary/10 shadow-md hover:shadow-xl transition-all duration-200 w-full md:w-auto"
           >
             Try File Compressor
           </Button>
