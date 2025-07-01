@@ -1,4 +1,4 @@
-import type {NextConfig} from 'next';
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -11,18 +11,18 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'placehold.co',
-        port: '',
-        pathname: '/**',
+        protocol: "https",
+        hostname: "placehold.co",
+        port: "",
+        pathname: "/**",
       },
     ],
   },
   experimental: {
     serverActions: {
-      bodySizeLimit: 50 * 1024 * 1024
-    }
-  }
+      bodySizeLimit: 300 * 1024 * 1024,
+    },
+  },
 };
 
 export default nextConfig;

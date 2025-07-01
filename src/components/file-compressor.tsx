@@ -23,7 +23,11 @@ import {
   X,
 } from "lucide-react";
 import { useActionState, useTransition } from "react";
-import { compressImage, compressDocs, type ConversionState } from "@/app/actions";
+import {
+  compressImage,
+  compressDocs,
+  type ConversionState,
+} from "@/app/actions";
 import { motion } from "framer-motion";
 
 const IMAGE_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
@@ -34,7 +38,7 @@ const DOC_TYPES = [
   "text/plain",
 ];
 const MAX_FILES = 20;
-const MAX_TOTAL_SIZE = 50 * 1024 * 1024;
+const MAX_TOTAL_SIZE = 300 * 1024 * 1024;
 
 export default function FileCompressor() {
   const [files, setFiles] = useState<File[]>([]);
@@ -85,7 +89,7 @@ export default function FileCompressor() {
       toast({
         variant: "destructive",
         title: "File Size Limit",
-        description: "Max total size is 50MB.",
+        description: "Max total size is 300MB.",
       });
       return;
     }
@@ -127,10 +131,13 @@ export default function FileCompressor() {
         <CardHeader>
           <div className="flex items-center gap-3">
             <FileArchive className="h-8 w-8 text-primary" />
-            <CardTitle className="text-3xl font-bold tracking-tight">File Compressor</CardTitle>
+            <CardTitle className="text-3xl font-bold tracking-tight">
+              File Compressor
+            </CardTitle>
           </div>
           <CardDescription className="text-lg">
-            Compress up to 20 images or documents (max 50MB per request) with best quality.
+            Compress up to 20 images or documents (max 300MB per request) with
+            best quality.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -145,8 +152,13 @@ export default function FileCompressor() {
               >
                 <div className="text-center">
                   <UploadCloud className="mx-auto h-14 w-14 text-primary/70 group-hover:scale-110 transition-transform duration-200" />
-                  <p className="mt-4 font-semibold text-foreground text-lg">Click to upload or drag and drop</p>
-                  <p className="text-sm text-muted-foreground mt-1">Images: PNG, JPG, WEBP | Docs: PDF, DOCX, TXT (max 50MB, up to 20 files)</p>
+                  <p className="mt-4 font-semibold text-foreground text-lg">
+                    Click to upload or drag and drop
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Images: PNG, JPG, WEBP | Docs: PDF, DOCX, TXT (max 300MB, up
+                    to 20 files)
+                  </p>
                 </div>
                 <Input
                   ref={fileInputRef}
@@ -177,7 +189,9 @@ export default function FileCompressor() {
                       ) : (
                         <FileText className="h-4 w-4 text-primary" />
                       )}
-                      <span className="text-xs font-medium text-foreground/90">{file.name}</span>
+                      <span className="text-xs font-medium text-foreground/90">
+                        {file.name}
+                      </span>
                     </div>
                   ))}
                   <Button
@@ -196,8 +210,8 @@ export default function FileCompressor() {
                     {fileType === "image"
                       ? "Image(s)"
                       : fileType === "doc"
-                        ? "Document(s)"
-                        : "-"}
+                      ? "Document(s)"
+                      : "-"}
                   </span>
                 </div>
               </motion.div>
@@ -221,7 +235,12 @@ export default function FileCompressor() {
                 transition={{ duration: 0.5 }}
                 className="flex justify-center mt-6"
               >
-                <Button type="submit" size="lg" disabled={isPending} className="px-8 py-4 text-lg font-semibold shadow-lg rounded-lg">
+                <Button
+                  type="submit"
+                  size="lg"
+                  disabled={isPending}
+                  className="px-8 py-4 text-lg font-semibold shadow-lg rounded-lg"
+                >
                   {isPending ? "Compressing..." : "Compress Files"}
                 </Button>
               </motion.div>
@@ -237,7 +256,9 @@ export default function FileCompressor() {
               transition={{ duration: 0.5 }}
               className="mt-8"
             >
-              <Label className="text-center block mb-2 text-lg font-semibold">Compressed Files</Label>
+              <Label className="text-center block mb-2 text-lg font-semibold">
+                Compressed Files
+              </Label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
                 {formState.results.map((result, idx) =>
                   result.convertedImage ? (
@@ -245,11 +266,19 @@ export default function FileCompressor() {
                       key={idx}
                       className="border rounded-lg p-6 flex flex-col items-center bg-muted/40 shadow-md"
                     >
-                      <p className="text-green-600 text-sm mb-2">{result.message}</p>
+                      <p className="text-green-600 text-sm mb-2">
+                        {result.message}
+                      </p>
                       <a
-                        ref={el => { downloadLinksRef.current[idx] = el || null; }}
+                        ref={(el) => {
+                          downloadLinksRef.current[idx] = el || null;
+                        }}
                         href={result.convertedImage}
-                        download={typeof result.fileName === "string" ? result.fileName : `compressed-file-${idx + 1}`}
+                        download={
+                          typeof result.fileName === "string"
+                            ? result.fileName
+                            : `compressed-file-${idx + 1}`
+                        }
                         className="hidden"
                       >
                         Download
@@ -268,7 +297,9 @@ export default function FileCompressor() {
                       key={idx}
                       className="border rounded-lg p-6 flex flex-col items-center bg-muted/40 shadow-md"
                     >
-                      <p className="text-red-600 text-sm mb-2">{result.message || "Compression failed."}</p>
+                      <p className="text-red-600 text-sm mb-2">
+                        {result.message || "Compression failed."}
+                      </p>
                     </div>
                   )
                 )}
@@ -295,7 +326,9 @@ function FeatureBox({
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
-      className={`rounded-lg border p-6 shadow-md transition-shadow flex flex-col gap-2 ${active ? "border-primary shadow-lg bg-primary/5" : "bg-muted/30"}`}
+      className={`rounded-lg border p-6 shadow-md transition-shadow flex flex-col gap-2 ${
+        active ? "border-primary shadow-lg bg-primary/5" : "bg-muted/30"
+      }`}
     >
       <h3 className="text-lg font-semibold mb-2">{title}</h3>
       <p className="text-muted-foreground text-base">{description}</p>
