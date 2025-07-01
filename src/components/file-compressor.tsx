@@ -29,6 +29,7 @@ import {
   type ConversionState,
 } from "@/app/actions";
 import { motion } from "framer-motion";
+import { Slider } from "@/components/ui/slider";
 
 const IMAGE_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
 const DOC_TYPES = [
@@ -50,6 +51,7 @@ export default function FileCompressor() {
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const downloadLinksRef = useRef<(HTMLAnchorElement | null)[]>([]);
+  const [targetSize, setTargetSize] = useState(20);
 
   useEffect(() => {
     if (formState.message) {
@@ -116,6 +118,7 @@ export default function FileCompressor() {
     } else if (fileType === "doc") {
       files.forEach((file) => formData.append("docs", file));
     }
+    formData.append("targetSize", String(targetSize));
     startTransition(() => {
       formAction(formData);
     });
@@ -245,6 +248,28 @@ export default function FileCompressor() {
                 </Button>
               </motion.div>
             )}
+            <div className="mt-8">
+              <Label
+                htmlFor="target-size-slider"
+                className="mb-2 block text-base font-medium"
+              >
+                Target Output Size:{" "}
+                <span className="text-primary font-bold">{targetSize} MB</span>
+              </Label>
+              <Slider
+                id="target-size-slider"
+                min={1}
+                max={300}
+                step={1}
+                value={[targetSize]}
+                onValueChange={([val]) => setTargetSize(val)}
+                className="w-full"
+              />
+              <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                <span>1MB</span>
+                <span>300MB</span>
+              </div>
+            </div>
           </form>
           {isPending && (
             <Progress value={undefined} className="animate-pulse mt-6" />

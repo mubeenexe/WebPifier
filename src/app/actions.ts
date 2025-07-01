@@ -164,6 +164,8 @@ export async function compressImage(
   formData: FormData
 ): Promise<ConversionState> {
   const images = formData.getAll("images");
+  const targetSizeMB = parseInt(formData.get("targetSize") as string) || 20;
+  const targetSizeBytes = targetSizeMB * 1024 * 1024;
   const validation = validateFiles(
     images,
     ACCEPTED_IMAGE_TYPES,
@@ -175,42 +177,78 @@ export async function compressImage(
     images.map(async (image: any, idx: number) => {
       try {
         const imageBuffer = Buffer.from(await image.arrayBuffer());
-        // Use sharp to compress (quality 80, lossless for PNG)
         let compressedBuffer;
         let outputFileName;
         let mimeType = image.type;
-        if (image.type === "image/jpeg" || image.type === "image/jpg") {
-          compressedBuffer = await sharp(imageBuffer)
-            .jpeg({ quality: 80 })
-            .toBuffer();
+        let quality = 80;
+        // Binary search for quality to approach target size (JPEG/WEBP)
+        if (
+          image.type === "image/jpeg" ||
+          image.type === "image/jpg" ||
+          image.type === "image/webp"
+        ) {
+          let minQ = 10,
+            maxQ = 100,
+            bestQ = 80,
+            bestBuf = null,
+            bestDiff = Infinity;
+          for (let i = 0; i < 7; i++) {
+            // 7 iterations is enough for 1-100
+            quality = Math.round((minQ + maxQ) / 2);
+            let buf;
+            if (image.type === "image/jpeg" || image.type === "image/jpg") {
+              buf = await sharp(imageBuffer).jpeg({ quality }).toBuffer();
+            } else {
+              buf = await sharp(imageBuffer).webp({ quality }).toBuffer();
+            }
+            const diff = Math.abs(buf.length - targetSizeBytes);
+            if (diff < bestDiff) {
+              bestDiff = diff;
+              bestQ = quality;
+              bestBuf = buf;
+            }
+            if (buf.length > targetSizeBytes) {
+              maxQ = quality - 1;
+            } else {
+              minQ = quality + 1;
+            }
+          }
+          compressedBuffer = bestBuf;
+          quality = bestQ;
           outputFileName = `${image.name
             .split(".")
             .slice(0, -1)
-            .join(".")}-compressed.jpg`;
+            .join(".")}-compressed.${
+            image.type === "image/webp" ? "webp" : "jpg"
+          }`;
         } else if (image.type === "image/png") {
-          compressedBuffer = await sharp(imageBuffer)
+          // PNG: try different compression levels, but PNG is lossless so size control is limited
+          let bestBuf = await sharp(imageBuffer)
             .png({ quality: 80, compressionLevel: 9 })
             .toBuffer();
+          compressedBuffer = bestBuf;
           outputFileName = `${image.name
             .split(".")
             .slice(0, -1)
             .join(".")}-compressed.png`;
-        } else if (image.type === "image/webp") {
-          compressedBuffer = await sharp(imageBuffer)
-            .webp({ quality: 80 })
-            .toBuffer();
-          outputFileName = `${image.name
-            .split(".")
-            .slice(0, -1)
-            .join(".")}-compressed.webp`;
         } else {
           return { message: "Unsupported image type.", error: true };
+        }
+        // After binary search for quality
+        if (!compressedBuffer) {
+          return {
+            message: "Compression failed: could not generate output.",
+            error: true,
+          };
         }
         const base64Image = `data:${mimeType};base64,${compressedBuffer.toString(
           "base64"
         )}`;
         return {
-          message: "Compression successful!",
+          message: `Compression successful! Output size: ${(
+            compressedBuffer.length /
+            (1024 * 1024)
+          ).toFixed(2)} MB (Quality: ${quality})`,
           convertedImage: base64Image,
           fileName: outputFileName,
           error: false,
@@ -247,7 +285,12 @@ export async function compressDocs(
     const archive = archiver("zip", { zlib: { level: 9 } });
     archive.pipe(archiveStream);
     for (const doc of docs) {
-      if (typeof doc === 'object' && doc !== null && 'arrayBuffer' in doc && 'name' in doc) {
+      if (
+        typeof doc === "object" &&
+        doc !== null &&
+        "arrayBuffer" in doc &&
+        "name" in doc
+      ) {
         const buffer = Buffer.from(await doc.arrayBuffer());
         archive.append(buffer, { name: doc.name });
       } else {
@@ -256,7 +299,9 @@ export async function compressDocs(
       }
     }
     let totalLength = 0;
-    archiveStream.on('data', (chunk) => { totalLength += chunk.length; });
+    archiveStream.on("data", (chunk) => {
+      totalLength += chunk.length;
+    });
     await archive.finalize();
     const chunks: Buffer[] = [];
     for await (const chunk of archiveStream) {
